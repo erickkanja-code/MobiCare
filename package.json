@@ -14,6 +14,12 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^8.0.3"
+    "vite": "^5.1.4"
   }
 }
+```
+
+Then run:
+```
+npm install
+npm run dev

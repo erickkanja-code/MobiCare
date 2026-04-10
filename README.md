@@ -1,239 +1,169 @@
-# 🏥 MobiCare — Community Health Worker PWA
+# MobiCare
 
-Offline-first Progressive Web App for Community Health Workers in Rwanda to track patients and visits.
-
----
-
-## ✨ Features
-
-- **Offline-First**: All patient data, visits, and forms work without internet using IndexedDB
-- **Auth**: Email/password login (Firebase Auth), remember-me 7-day sessions, password reset
-- **Patient Management**: Add/edit/search patients, auto-generated patient IDs (CHW_ID-P####)
-- **Visit Scheduling**: Schedule with type (Routine/Follow-up/Emergency), prevent past dates
-- **Visit Logging**: Complete visits with required notes (10–500 chars), vital signs, up to 3 photos
-- **Dashboard**: Today's visits, overdue count, weekly completions, color-coded status
-- **Sync**: IndexedDB sync queue, auto-syncs on reconnect, conflict resolution (last-write-wins)
-- **PWA**: Installable, service worker caching, works on mobile Chrome offline
+A mobile-first web application for Community Health Workers in Rwanda to manage patient records and track home visits. Works fully offline and syncs data when internet is available.
 
 ---
 
-## 🛠 Tech Stack
+## Requirements
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, React Router, IndexedDB (native), Service Worker |
-| Backend | Node.js, Express.js |
-| Database | PostgreSQL 14+ |
-| Auth & Storage | Firebase Authentication, Firebase Storage |
-| Deployment | Railway (backend), Vercel/Netlify (frontend) |
+Before you start, make sure you have the following installed on your computer:
+
+- Node.js version 18 or newer — download from https://nodejs.org
+- Git — download from https://git-scm.com
+
+To confirm they are installed, open your terminal and run:
+
+node -v
+git --version
+
+Both commands should print a version number. If either gives an error, install the missing one before continuing.
 
 ---
 
-## 🚀 Quick Start
+## Getting the project
 
-### Prerequisites
-- Node.js 18+
-- PostgreSQL 14+
-- Firebase project (Auth + Storage enabled)
+Clone the repository to your computer:
 
-### 1. Firebase Setup
-1. Create a Firebase project at https://console.firebase.google.com
-2. Enable **Authentication → Email/Password**
-3. Enable **Storage**
-4. Generate a **Service Account** key (Project Settings → Service Accounts)
-5. Copy your Firebase config (Project Settings → General)
+git clone https://github.com/erickkanja-code/MobiCare.git
 
-### 2. Backend Setup
+Navigate into the project folder:
 
-```bash
+cd MobiCare
+
+---
+
+## Installing dependencies
+
+Run the following command:
+
+npm install --legacy-peer-deps
+
+This will download all the packages the project needs. It may take a minute.
+
+---
+
+## Running the app locally
+
+Once installation is complete, start the development server:
+
+npm run dev
+
+Then open your browser and go to:
+
+http://localhost:3000
+
+---
+
+## Logging in
+
+The app includes a demo account for testing:
+
+Email: alice@mobicare.rw
+Password: password123
+
+---
+
+## What you can do in the app
+
+- View the dashboard showing today's visits and overdue cases
+- Browse and search the patient list
+- Add and edit patient records
+- Schedule visits for patients
+- Log completed visits with notes and vital signs
+- Upload photos during a visit log
+- Use the app with no internet connection — all data is saved locally and syncs automatically when you go back online
+
+---
+
+## Offline mode
+
+The app is designed to work without an internet connection. All data is stored in your browser's local database. To test this:
+
+1. Open the app and log in
+2. Turn off your internet connection or enable airplane mode
+3. Add a patient or log a visit — it will still work
+4. Turn your internet back on
+5. The sync indicator in the top right of the app will update and push your changes
+
+---
+
+## Deploying to Vercel
+
+To host the frontend online:
+
+1. Push the repository to GitHub if you have not already
+2. Go to https://vercel.com and sign in with your GitHub account
+3. Click "Add New Project" and import this repository
+4. Vercel will detect it as a Vite project automatically
+5. Click Deploy
+6. Vercel will give you a public URL you can share and open on any device
+
+No environment variables are needed for the frontend-only deployment.
+
+---
+
+## Project structure
+
+MobiCare/
+├── index.html          
+├── package.json        
+├── vite.config.js      
+├── src/
+│   ├── App.jsx          
+│   └── main.jsx         
+├── public/
+│   ├── manifest.json    
+│   └── sw.js            
+└── backend/
+    ├── server.js        
+    └── package.json     
+
+The backend folder contains an Express API and PostgreSQL setup for production use. It is not required to run the app locally or for a demo — the app works fully without it using browser storage.
+
+---
+
+## Backend setup (optional)
+
+Only follow these steps if you want to connect a real database and sync data across multiple devices.
+
+Requirements:
+- A PostgreSQL database
+- A Firebase project with Authentication and Storage enabled
+
+1. Navigate to the backend folder:
+
 cd backend
+
+2. Install backend dependencies:
+
 npm install
 
-# Create .env file:
-cat > .env << EOF
-DATABASE_URL=postgresql://user:pass@localhost:5432/mobicare
-FIREBASE_SERVICE_ACCOUNT={"type":"service_account",...}   # paste JSON as single line
+3. Create a file called .env inside the backend folder with the following:
+
+DATABASE_URL=postgresql://youruser:yourpassword@localhost:5432/mobicare
+FIREBASE_SERVICE_ACCOUNT=paste the contents of your Firebase service account JSON here as a single line
 FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 FRONTEND_URL=http://localhost:3000
 PORT=3001
-EOF
 
-npm start
-```
+4. Start the backend server:
 
-### 3. Frontend Setup
+node server.js
 
-```bash
-cd ..  # root directory
-npm install
-
-# Create .env file:
-cat > .env << EOF
-REACT_APP_FIREBASE_API_KEY=your_api_key
-REACT_APP_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-REACT_APP_FIREBASE_PROJECT_ID=your-project-id
-REACT_APP_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=123456789
-REACT_APP_FIREBASE_APP_ID=1:123:web:abc
-REACT_APP_API_URL=http://localhost:3001
-EOF
-
-npm start
-```
-
-### 4. Test Offline (Demo Mode)
-
-The app includes a **demo mode** with mock authentication — no Firebase needed to test locally:
-- Email: `alice@mobicare.rw`
-- Password: `password123`
+The API will run on http://localhost:3001
 
 ---
 
-## 🔌 Connecting Firebase Auth
+## Troubleshooting
 
-Replace the mock auth in `src/App.jsx` with real Firebase:
+npm install fails with a peer dependency error
+Run npm install --legacy-peer-deps instead of npm install
 
-```javascript
-import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
+The app opens but shows a blank page
+Make sure you are in the correct folder. The index.html file should be at the root of the project, not inside any subfolder.
 
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  // ... other config
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+Port 3000 is already in use
+Open vite.config.js and change port: 3000 to any other number such as 3001, then run npm run dev again.
 
-// In handleLogin:
-const credential = await signInWithEmailAndPassword(auth, email, password);
-const token = await credential.user.getIdToken();
-// Store token and use as: Authorization: Bearer <token>
-```
-
----
-
-## 🏗 Database Schema
-
-```sql
-CREATE TABLE patients (
-  id TEXT PRIMARY KEY,
-  chw_id TEXT NOT NULL,
-  patient_id TEXT UNIQUE,       -- e.g. CHW001-P0001
-  name TEXT NOT NULL,
-  age INTEGER,
-  phone TEXT,
-  location TEXT NOT NULL,       -- "Sector, Cell"
-  created_at TIMESTAMPTZ,
-  updated_at TIMESTAMPTZ
-);
-
-CREATE TABLE visits (
-  id TEXT PRIMARY KEY,
-  patient_id TEXT REFERENCES patients(id),
-  chw_id TEXT NOT NULL,
-  visit_type TEXT NOT NULL,     -- Routine Checkup | Follow-up Visit | Emergency
-  scheduled_date TIMESTAMPTZ,
-  completed_date TIMESTAMPTZ,
-  status TEXT,                  -- scheduled | completed | cancelled
-  notes TEXT,
-  photo_urls TEXT[],
-  vital_signs JSONB,            -- {temperature, systolic, diastolic}
-  created_at TIMESTAMPTZ,
-  updated_at TIMESTAMPTZ
-);
-```
-
----
-
-## 📡 API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/patients` | List CHW's patients |
-| POST | `/api/patients` | Create/upsert patient |
-| PUT | `/api/patients/:id` | Update patient |
-| DELETE | `/api/patients/:id` | Delete patient |
-| GET | `/api/visits` | List CHW's visits |
-| POST | `/api/visits` | Create/upsert visit |
-| PUT | `/api/visits/:id` | Update visit |
-| GET | `/api/dashboard/stats` | Dashboard statistics |
-| POST | `/api/photos` | Upload photo to Firebase Storage |
-
-All endpoints require `Authorization: Bearer <firebase_token>` header.
-
----
-
-## 📱 Offline Architecture
-
-```
-User Action → Update IndexedDB → Add to sync_queue → UI updates immediately
-
-On reconnect:
-  sync_queue FIFO → POST/PUT to API → Remove from queue on success
-  Failed: retry with exponential backoff (3 attempts: 1s, 2s, 4s)
-  If all retries fail: mark as permanently failed, alert user
-```
-
-### IndexedDB Tables
-- `patients` — Local patient records
-- `visits` — Local visit records  
-- `sync_queue` — Pending changes: `{action, data, timestamp, retries}`
-
----
-
-## 🚢 Deployment
-
-### Backend → Railway
-1. Connect GitHub repo to Railway
-2. Set environment variables (DATABASE_URL, FIREBASE_SERVICE_ACCOUNT, etc.)
-3. Railway auto-deploys on push
-
-### Frontend → Vercel
-```bash
-npm run build
-vercel --prod
-```
-
----
-
-## ✅ Validation Rules
-
-| Field | Rule |
-|-------|------|
-| Patient name | Required, 2–100 chars |
-| Location | Required, "Sector, Cell" format |
-| Phone | Optional, +250 7XX XXX XXX |
-| Visit notes | Required (on completion), 10–500 chars |
-| Temperature | 30–45°C |
-| BP Systolic | 60–250 mmHg |
-| BP Diastolic | 40–150 mmHg |
-| Photos | Max 3, compress to <2MB, JPEG |
-
----
-
-## 🧪 Testing Offline
-
-1. Open Chrome DevTools → Network → set to "Offline"
-2. Add/edit patients and schedule visits
-3. All changes saved locally
-4. Turn offline off → auto-sync triggers
-5. Check sync indicator in header (✓ green = synced, ↻ yellow = syncing, ⚠ red = offline)
-
----
-
-## 📁 Project Structure
-
-```
-MobiCare/
-├── public/
-│   ├── index.html          # PWA shell
-│   ├── manifest.json       # PWA manifest
-│   └── sw.js               # Service worker
-├── src/
-│   └── App.jsx             # Full React application (single-file)
-├── backend/
-│   ├── server.js           # Express API
-│   └── package.json
-├── package.json
-└── README.md
-```
+Changes not showing after git push to Vercel
+Go to your Vercel dashboard, open the project, and manually trigger a new deployment.

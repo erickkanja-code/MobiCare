@@ -17,9 +17,3 @@
     "vite": "^5.1.4"
   }
 }
-```
-
-Then run:
-```
-npm install
-npm run dev

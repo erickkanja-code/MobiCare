@@ -87,18 +87,6 @@ The app is designed to work without an internet connection. All data is stored i
 
 ---
 
-## Deploying to Vercel
-
-To host the frontend online:
-
-1. Push the repository to GitHub if you have not already
-2. Go to https://vercel.com and sign in with your GitHub account
-3. Click "Add New Project" and import this repository
-4. Vercel will detect it as a Vite project automatically
-5. Click Deploy
-6. Vercel will give you a public URL you can share and open on any device
-
-No environment variables are needed for the frontend-only deployment.
 
 ---
 
@@ -122,37 +110,6 @@ The backend folder contains an Express API and PostgreSQL setup for production u
 
 ---
 
-## Backend setup (optional)
-
-Only follow these steps if you want to connect a real database and sync data across multiple devices.
-
-Requirements:
-- A PostgreSQL database
-- A Firebase project with Authentication and Storage enabled
-
-1. Navigate to the backend folder:
-
-cd backend
-
-2. Install backend dependencies:
-
-npm install
-
-3. Create a file called .env inside the backend folder with the following:
-
-DATABASE_URL=postgresql://youruser:yourpassword@localhost:5432/mobicare
-FIREBASE_SERVICE_ACCOUNT=paste the contents of your Firebase service account JSON here as a single line
-FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-FRONTEND_URL=http://localhost:3000
-PORT=3001
-
-4. Start the backend server:
-
-node server.js
-
-The API will run on http://localhost:3001
-
----
 
 ## Troubleshooting
 

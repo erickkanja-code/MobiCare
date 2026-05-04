@@ -279,12 +279,23 @@ function BottomNav({ tab, setTab, counts }) {
   );
 }
 
-function StatCard({ icon, value, label, color, bg, onClick }) {
+function StatCard({ value, label, sub, borderColor, valueColor, onClick }) {
   return (
-    <div onClick={onClick} style={{ background: bg || "#fff", borderRadius: 16, padding: "20px 16px", display: "flex", flexDirection: "column", alignItems: "center", flex: 1, boxShadow: "0 2px 12px rgba(0,0,0,0.08)", cursor: onClick ? "pointer" : "default" }}>
-      <span style={{ fontSize: 12, fontWeight: 800, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 8, background: "rgba(0,0,0,0.07)", marginBottom: 6 }}>{icon}</span>
-      <span style={{ fontSize: 32, fontWeight: 800, color, lineHeight: 1 }}>{value}</span>
-      <span style={{ fontSize: 12, color: "#666", marginTop: 4, textAlign: "center", fontWeight: 500 }}>{label}</span>
+    <div onClick={onClick} style={{
+      background: "#fff",
+      borderRadius: 12,
+      padding: "18px 16px 16px",
+      flex: 1,
+      boxShadow: "0 1px 8px rgba(0,0,0,0.07)",
+      cursor: onClick ? "pointer" : "default",
+      borderLeft: "4px solid " + borderColor,
+      display: "flex",
+      flexDirection: "column",
+      gap: 6,
+    }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: "#888", letterSpacing: 1, textTransform: "uppercase" }}>{label}</span>
+      <span style={{ fontSize: 30, fontWeight: 800, color: valueColor || "#1a1a2e", lineHeight: 1 }}>{value}</span>
+      {sub && <span style={{ fontSize: 11, color: valueColor && valueColor !== "#1a1a2e" ? valueColor : "#999", fontWeight: 500 }}>{sub}</span>}
     </div>
   );
 }
@@ -296,15 +307,17 @@ function Dashboard({ visits, patients, onGoToVisits }) {
     if (v.status !== "completed") return false;
     return new Date(v.completed_date || v.updated_at) >= new Date(Date.now() - 7 * 86400000);
   });
+  const totalPatients = patients.length;
   const getPatientName = (pid) => patients.find(p => p.id === pid)?.name || "Unknown";
 
   return (
     <div style={{ padding: "16px 16px 100px" }}>
-      <h2 style={{ margin: "0 0 20px", fontSize: 22, fontWeight: 800, color: "#1b5e20" }}>Dashboard</h2>
-      <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-        <StatCard icon="T" value={today.length} label="Today" color="#2e7d32" bg="#f1f8e9" />
-        <StatCard icon="!" value={overdue.length} label="Overdue" color="#c62828" bg="#ffebee" onClick={() => onGoToVisits("overdue")} />
-        <StatCard icon="D" value={completedThisWeek.length} label="This Week" color="#1565c0" bg="#e3f2fd" />
+      <h2 style={{ margin: "0 0 16px", fontSize: 22, fontWeight: 800, color: "#1b5e20" }}>Dashboard</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
+        <StatCard value={today.length} label="Today's Visits" sub={today.length === 1 ? "visit scheduled" : "visits scheduled"} borderColor="#2e7d32" />
+        <StatCard value={overdue.length} label="Overdue" sub={overdue.length > 0 ? "Review needed" : "All up to date"} borderColor="#c62828" valueColor={overdue.length > 0 ? "#c62828" : "#1a1a2e"} onClick={() => onGoToVisits("overdue")} />
+        <StatCard value={completedThisWeek.length} label="Completed" sub="this week" borderColor="#1565c0" />
+        <StatCard value={totalPatients} label="Total Patients" sub="registered" borderColor="#6a1b9a" />
       </div>
       {today.length > 0 && (
         <>
